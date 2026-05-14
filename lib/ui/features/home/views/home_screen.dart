@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../../app/router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_background.dart';
 import '../../../core/widgets/artwork_card.dart';
@@ -19,57 +18,46 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       body: AppBackground(
         child: SafeArea(
-          child: Stack(
-            children: [
-              CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
-                    sliver: SliverToBoxAdapter(
-                      child: _Header().animate().fadeIn().slideY(
-                        begin: 0.08,
-                        duration: 420.ms,
-                        curve: Curves.easeOutCubic,
-                      ),
-                    ),
+          child: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+                sliver: SliverToBoxAdapter(
+                  child: _Header().animate().fadeIn().slideY(
+                    begin: 0.08,
+                    duration: 420.ms,
+                    curve: Curves.easeOutCubic,
                   ),
-                  SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    sliver: SliverToBoxAdapter(
-                      child: _SearchPill().animate().fadeIn(delay: 80.ms),
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _FilterRow(
-                      filters: state.filters,
-                    ).animate().fadeIn(delay: 140.ms),
-                  ),
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 128),
-                    sliver: SliverGrid(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final artwork = state.artwork[index];
-                        return ArtworkCard(
-                          artwork: artwork,
-                          compact: index.isOdd,
-                        ).animate().fadeIn(delay: (180 + index * 45).ms);
-                      }, childCount: state.artwork.length),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 14,
-                            crossAxisSpacing: 14,
-                            childAspectRatio: 0.72,
-                          ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-              const Positioned(
-                left: 16,
-                right: 16,
-                bottom: 16,
-                child: _BottomNavigation(),
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                sliver: SliverToBoxAdapter(
+                  child: _SearchPill().animate().fadeIn(delay: 80.ms),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: _FilterRow(
+                  filters: state.filters,
+                ).animate().fadeIn(delay: 140.ms),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 128),
+                sliver: SliverGrid(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final artwork = state.artwork[index];
+                    return ArtworkCard(
+                      artwork: artwork,
+                      compact: index.isOdd,
+                    ).animate().fadeIn(delay: (180 + index * 45).ms);
+                  }, childCount: state.artwork.length),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 14,
+                    crossAxisSpacing: 14,
+                    childAspectRatio: 0.72,
+                  ),
+                ),
               ),
             ],
           ),
@@ -208,81 +196,6 @@ class _FilterRow extends StatelessWidget {
         },
         separatorBuilder: (context, index) => const SizedBox(width: 8),
         itemCount: filters.length,
-      ),
-    );
-  }
-}
-
-class _BottomNavigation extends StatelessWidget {
-  const _BottomNavigation();
-
-  @override
-  Widget build(BuildContext context) {
-    final tabs = [
-      (AppRoute.home, Icons.home_rounded),
-      (AppRoute.search, Icons.search_rounded),
-      (AppRoute.create, Icons.add_rounded),
-      (AppRoute.bookmarks, Icons.favorite_rounded),
-      (AppRoute.profile, Icons.person_rounded),
-    ];
-
-    return GlassPanel(
-      radius: 32,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      strong: true,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          for (final tab in tabs)
-            _NavButton(
-              route: tab.$1,
-              icon: tab.$2,
-              active: tab.$1 == AppRoute.home,
-            ),
-        ],
-      ),
-    ).animate().slideY(begin: 0.4, duration: 520.ms).fadeIn();
-  }
-}
-
-class _NavButton extends StatelessWidget {
-  const _NavButton({
-    required this.route,
-    required this.icon,
-    required this.active,
-  });
-
-  final AppRoute route;
-  final IconData icon;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: route.label,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: active ? AppColors.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(999),
-          boxShadow: active
-              ? const [
-                  BoxShadow(
-                    color: Color(0x4D4C5FEF),
-                    blurRadius: 14,
-                    offset: Offset(0, 4),
-                  ),
-                ]
-              : null,
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(active ? 13 : 12),
-          child: Icon(
-            icon,
-            color: active ? Colors.white : AppColors.inkSub,
-            size: active ? 23 : 22,
-          ),
-        ),
       ),
     );
   }
