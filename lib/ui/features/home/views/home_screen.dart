@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -8,11 +10,18 @@ import '../../../core/widgets/artwork_card.dart';
 import '../../../core/widgets/glass_panel.dart';
 import '../view_models/home_view_model.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  var _activeFilterIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(homeViewModelProvider).build();
 
     return Scaffold(
@@ -20,15 +29,9 @@ class HomeScreen extends ConsumerWidget {
         child: SafeArea(
           child: CustomScrollView(
             slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
-                sliver: SliverToBoxAdapter(
-                  child: _Header().animate().fadeIn().slideY(
-                    begin: 0.08,
-                    duration: 420.ms,
-                    curve: Curves.easeOutCubic,
-                  ),
-                ),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StickyHomeHeaderDelegate(),
               ),
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -39,6 +42,12 @@ class HomeScreen extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: _FilterRow(
                   filters: state.filters,
+                  activeIndex: _activeFilterIndex,
+                  onChanged: (index) {
+                    setState(() {
+                      _activeFilterIndex = index;
+                    });
+                  },
                 ).animate().fadeIn(delay: 140.ms),
               ),
               SliverPadding(
@@ -67,46 +76,115 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
+class _StickyHomeHeaderDelegate extends SliverPersistentHeaderDelegate {
+  static const _maxHeaderExtent = 88.0;
+  static const _minHeaderExtent = 64.0;
+
+  @override
+  double get maxExtent => _maxHeaderExtent;
+
+  @override
+  double get minExtent => _minHeaderExtent;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    final t = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
+
+    return _Header(progress: t);
+  }
+
+  @override
+  bool shouldRebuild(covariant _StickyHomeHeaderDelegate oldDelegate) => false;
+}
+
 class _Header extends StatelessWidget {
+  const _Header({required this.progress});
+
+  final double progress;
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'TODAY',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  letterSpacing: 0.8,
-                  color: AppColors.inkSub,
-                ),
+    final backgroundOpacity = lerpDouble(0, 0.86, progress)!;
+    final blur = lerpDouble(0, 28, progress)!;
+    final titleSize = lerpDouble(32, 22, progress)!;
+    final avatarRadius = lerpDouble(20, 17, progress)!;
+    final topPadding = lerpDouble(18, 8, progress)!;
+    final bottomPadding = lerpDouble(8, 7, progress)!;
+
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.bg.withValues(alpha: backgroundOpacity),
+            border: Border(
+              bottom: BorderSide(
+                color: AppColors.ink.withValues(alpha: progress * 0.06),
               ),
-              const SizedBox(height: 6),
-              Text(
-                'Discover',
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-            ],
+            ),
           ),
-        ),
-        GlassPanel(
-          radius: 999,
-          padding: const EdgeInsets.all(5),
-          strong: true,
-          child: CircleAvatar(
-            radius: 20,
-            backgroundColor: AppColors.primarySoft,
-            child: Icon(
-              Icons.auto_awesome_rounded,
-              color: AppColors.primary,
-              size: 20,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20, topPadding, 20, bottomPadding),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRect(
+                        child: Align(
+                          heightFactor: lerpDouble(1, 0, progress)!,
+                          alignment: Alignment.topLeft,
+                          child: Transform.translate(
+                            offset: Offset(0, -8 * progress),
+                            child: Opacity(
+                              opacity: 1 - progress,
+                              child: Text(
+                                'TODAY',
+                                style: Theme.of(context).textTheme.labelMedium
+                                    ?.copyWith(
+                                      letterSpacing: 0.8,
+                                      color: AppColors.inkSub,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: lerpDouble(6, 0, progress)!),
+                      Text(
+                        'Discover',
+                        style: Theme.of(context).textTheme.headlineLarge
+                            ?.copyWith(fontSize: titleSize),
+                      ),
+                    ],
+                  ),
+                ),
+                GlassPanel(
+                  radius: 999,
+                  padding: EdgeInsets.all(lerpDouble(5, 4, progress)!),
+                  strong: true,
+                  child: CircleAvatar(
+                    radius: avatarRadius,
+                    backgroundColor: AppColors.primarySoft,
+                    child: Icon(
+                      Icons.auto_awesome_rounded,
+                      color: AppColors.primary,
+                      size: lerpDouble(20, 17, progress)!,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }
@@ -153,49 +231,160 @@ class _SearchPill extends StatelessWidget {
 }
 
 class _FilterRow extends StatelessWidget {
-  const _FilterRow({required this.filters});
+  const _FilterRow({
+    required this.filters,
+    required this.activeIndex,
+    required this.onChanged,
+  });
 
   final List<String> filters;
+  final int activeIndex;
+  final ValueChanged<int> onChanged;
+
+  static const _gap = 8.0;
+  static const _horizontalPadding = 20.0;
+  static const _verticalPadding = 14.0;
+  static const _pillHeight = 36.0;
+  static const _pillHorizontalPadding = 16.0;
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = const TextStyle(
+      fontSize: 13,
+      fontWeight: FontWeight.w700,
+    );
+    final widths = [
+      for (final filter in filters)
+        _measureText(context, filter, textStyle) + _pillHorizontalPadding * 2,
+    ];
+    final activeLeft =
+        _horizontalPadding +
+        widths
+            .take(activeIndex)
+            .fold<double>(0, (offset, width) => offset + width + _gap);
+    final rowWidth =
+        _horizontalPadding * 2 +
+        widths.fold<double>(0, (total, width) => total + width) +
+        _gap * (filters.length - 1);
+
     return SizedBox(
       height: 58,
-      child: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
+      child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          final active = index == 0;
-          return DecoratedBox(
-            decoration: BoxDecoration(
-              color: active ? AppColors.ink : AppColors.bgPure,
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(
-                color: active ? AppColors.ink : AppColors.primaryBorder,
-              ),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x0D14141E),
-                  blurRadius: 12,
-                  offset: Offset(0, 4),
+        clipBehavior: Clip.none,
+        child: SizedBox(
+          width: rowWidth,
+          child: Stack(
+            children: [
+              AnimatedPositioned(
+                duration: 520.ms,
+                curve: Curves.easeOutBack,
+                left: activeLeft,
+                top: _verticalPadding,
+                width: widths[activeIndex],
+                height: _pillHeight,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: AppColors.ink,
+                    borderRadius: BorderRadius.circular(999),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x2914141E),
+                        blurRadius: 10,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-              child: Text(
-                filters[index],
-                style: TextStyle(
-                  color: active ? Colors.white : AppColors.ink,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13,
+              ),
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    _horizontalPadding,
+                    _verticalPadding,
+                    _horizontalPadding,
+                    8,
+                  ),
+                  child: Row(
+                    children: [
+                      for (var index = 0; index < filters.length; index++) ...[
+                        _FilterPill(
+                          label: filters[index],
+                          width: widths[index],
+                          active: activeIndex == index,
+                          onTap: () => onChanged(index),
+                        ),
+                        if (index != filters.length - 1)
+                          const SizedBox(width: _gap),
+                      ],
+                    ],
+                  ),
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  double _measureText(BuildContext context, String text, TextStyle style) {
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: Directionality.of(context),
+      maxLines: 1,
+    )..layout();
+
+    return painter.width;
+  }
+}
+
+class _FilterPill extends StatelessWidget {
+  const _FilterPill({
+    required this.label,
+    required this.width,
+    required this.active,
+    required this.onTap,
+  });
+
+  final String label;
+  final double width;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      selected: active,
+      label: label,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(999),
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: 240.ms,
+          curve: Curves.easeOutCubic,
+          width: width,
+          height: _FilterRow._pillHeight,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: active ? Colors.transparent : AppColors.glass,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: active ? Colors.transparent : AppColors.glassBorder,
             ),
-          );
-        },
-        separatorBuilder: (context, index) => const SizedBox(width: 8),
-        itemCount: filters.length,
+          ),
+          child: AnimatedDefaultTextStyle(
+            duration: 240.ms,
+            curve: Curves.easeOutCubic,
+            style: TextStyle(
+              color: active ? Colors.white : AppColors.ink,
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
+            child: Text(label),
+          ),
+        ),
       ),
     );
   }

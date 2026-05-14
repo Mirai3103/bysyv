@@ -13,6 +13,17 @@ void main() {
     expect(find.text('Ranking'), findsOneWidget);
   });
 
+  testWidgets('updates the active home filter pill', (tester) async {
+    await tester.pumpWidget(const ProviderScope(child: BysivApp()));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Original'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Original'), findsOneWidget);
+    expect(find.text('Discover'), findsOneWidget);
+  });
+
   testWidgets('switches between shell tabs', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: BysivApp()));
     await tester.pumpAndSettle();
