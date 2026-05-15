@@ -3,8 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../domain/models/artwork.dart';
 import '../../../core/widgets/app_background.dart';
 import '../../../core/widgets/artwork_card.dart';
 import '../../../core/widgets/glass_panel.dart';
@@ -22,55 +24,154 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(homeViewModelProvider).build();
+    final viewModel = ref.watch(homeViewModelProvider);
+    final state = viewModel.state;
 
     return Scaffold(
       body: AppBackground(
         child: SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _StickyHomeHeaderDelegate(),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                sliver: SliverToBoxAdapter(
-                  child: _SearchPill().animate().fadeIn(delay: 80.ms),
+          child: RefreshIndicator(
+            onRefresh: viewModel.refresh,
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _StickyHomeHeaderDelegate(),
                 ),
-              ),
-              SliverToBoxAdapter(
-                child: _FilterRow(
-                  filters: state.filters,
-                  activeIndex: _activeFilterIndex,
-                  onChanged: (index) {
-                    setState(() {
-                      _activeFilterIndex = index;
-                    });
-                  },
-                ).animate().fadeIn(delay: 140.ms),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 128),
-                sliver: SliverGrid(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    final artwork = state.artwork[index];
-                    return ArtworkCard(
-                      artwork: artwork,
-                      compact: index.isOdd,
-                    ).animate().fadeIn(delay: (180 + index * 45).ms);
-                  }, childCount: state.artwork.length),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 14,
-                    crossAxisSpacing: 14,
-                    childAspectRatio: 0.72,
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  sliver: SliverToBoxAdapter(
+                    child: _SearchPill().animate().fadeIn(delay: 80.ms),
                   ),
                 ),
-              ),
-            ],
+                SliverToBoxAdapter(
+                  child: _FilterRow(
+                    filters: state.filters,
+                    activeIndex: _activeFilterIndex.clamp(
+                      0,
+                      state.filters.length - 1,
+                    ),
+                    onChanged: (index) {
+                      setState(() {
+                        _activeFilterIndex = index;
+                      });
+                    },
+                  ).animate().fadeIn(delay: 140.ms),
+                ),
+                if (state.isLoading)
+                  const _ArtworkSkeletonGrid()
+                else if (state.hasError)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: _FeedMessage(
+                      title: 'Recommend failed',
+                      message: state.errorMessage!,
+                      actionLabel: 'Retry',
+                      onAction: viewModel.loadRecommended,
+                    ),
+                  )
+                else if (state.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: _FeedMessage(
+                      title: 'No recommendations',
+                      message: 'Pull to refresh and try again.',
+                      actionLabel: 'Refresh',
+                      onAction: viewModel.refresh,
+                    ),
+                  )
+                else
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 128),
+                    sliver: SliverGrid(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final artwork = state.artwork[index];
+                        return ArtworkCard(
+                          artwork: artwork,
+                          compact: index.isOdd,
+                        ).animate().fadeIn(delay: (180 + index * 45).ms);
+                      }, childCount: state.artwork.length),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 14,
+                            crossAxisSpacing: 14,
+                            childAspectRatio: 0.72,
+                          ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ArtworkSkeletonGrid extends StatelessWidget {
+  const _ArtworkSkeletonGrid();
+
+  @override
+  Widget build(BuildContext context) {
+    return Skeletonizer.sliver(
+      enabled: true,
+      child: SliverPadding(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 128),
+        sliver: SliverGrid(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final artwork = Artwork.samples[index % Artwork.samples.length];
+            return ArtworkCard(artwork: artwork, compact: index.isOdd);
+          }, childCount: 8),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 14,
+            crossAxisSpacing: 14,
+            childAspectRatio: 0.72,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FeedMessage extends StatelessWidget {
+  const _FeedMessage({
+    required this.title,
+    required this.message,
+    required this.actionLabel,
+    required this.onAction,
+  });
+
+  final String title;
+  final String message;
+  final String actionLabel;
+  final VoidCallback onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: AppColors.inkSub),
+          ),
+          const SizedBox(height: 18),
+          FilledButton(onPressed: onAction, child: Text(actionLabel)),
+        ],
       ),
     );
   }

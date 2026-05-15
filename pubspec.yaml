@@ -31,6 +31,9 @@ dependencies:
   flutter_form_builder: ^10.3.0+2
   not_static_icons: ^0.44.0
   lucide_icons_flutter: ^3.1.13
+  webview_flutter: ^4.13.1
+  crypto: ^3.0.7
+  flutter_secure_storage: ^10.2.0
 
 dev_dependencies:
   flutter_test:

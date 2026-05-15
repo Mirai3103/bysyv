@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -9,6 +10,8 @@ class ArtworkCard extends StatelessWidget {
   final Artwork artwork;
   final bool compact;
 
+  static const imageHeaders = {'Referer': 'https://www.pixiv.net/'};
+
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
@@ -18,15 +21,40 @@ class ArtworkCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: artwork.gradient,
+            if (artwork.imageUrl == null || artwork.imageUrl!.isEmpty)
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: artwork.gradient,
+                  ),
+                ),
+              )
+            else
+              CachedNetworkImage(
+                imageUrl: artwork.imageUrl!,
+                httpHeaders: imageHeaders,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: artwork.gradient,
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: artwork.gradient,
+                    ),
+                  ),
                 ),
               ),
-            ),
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -84,10 +112,12 @@ class ArtworkCard extends StatelessWidget {
                   color: const Color(0xCCFFFFFF),
                   borderRadius: BorderRadius.circular(999),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(7),
+                child: Padding(
+                  padding: const EdgeInsets.all(7),
                   child: Icon(
-                    Icons.favorite_border_rounded,
+                    artwork.isBookmarked
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
                     size: 16,
                     color: AppColors.primary,
                   ),

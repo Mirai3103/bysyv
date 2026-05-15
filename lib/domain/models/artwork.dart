@@ -7,6 +7,10 @@ class Artwork {
     required this.artist,
     required this.bookmarks,
     required this.gradient,
+    this.imageUrl,
+    this.pageCount = 1,
+    this.isBookmarked = false,
+    this.xRestrict = 0,
     this.isSpotlight = false,
   });
 
@@ -15,6 +19,10 @@ class Artwork {
   final String artist;
   final int bookmarks;
   final List<Color> gradient;
+  final String? imageUrl;
+  final int pageCount;
+  final bool isBookmarked;
+  final int xRestrict;
   final bool isSpotlight;
 
   static const samples = [
