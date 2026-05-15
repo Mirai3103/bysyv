@@ -6,7 +6,7 @@ import '../config/app_config.dart';
 final dioProvider = Provider<Dio>((ref) {
   return Dio(
     BaseOptions(
-      baseUrl: AppConfig.apiBaseUrl,
+      baseUrl: AppConfig.instance.apiBaseUrl,
       connectTimeout: AppConfig.apiTimeout,
       receiveTimeout: AppConfig.apiTimeout,
       sendTimeout: AppConfig.apiTimeout,
