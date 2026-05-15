@@ -91,6 +91,23 @@ class PixivAuthService {
     });
   }
 
+  Future<AuthSession> loginWithPassword({
+    required String username,
+    required String password,
+    String deviceToken = 'pixiv',
+  }) async {
+    return _postToken({
+      'grant_type': 'password',
+      'client_id': _clientId,
+      'client_secret': _clientSecret,
+      'username': username,
+      'password': password,
+      'Device_token': deviceToken,
+      'get_secure_url': 'true',
+      'include_policy': 'true',
+    });
+  }
+
   Future<AuthSession> refreshToken(String refreshToken) async {
     return _postToken({
       'grant_type': 'refresh_token',
