@@ -1,6 +1,7 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../domain/models/artwork.dart';
+import '../../domain/models/artwork_detail.dart';
 import '../../domain/models/bookmark_detail.dart';
 import '../../domain/models/feed_page.dart';
 import '../../domain/models/pixiv_comment.dart';
@@ -48,6 +49,23 @@ class ArtworkRepository {
   Future<Artwork?> detail(String illustId) async {
     final illust = await _apiService.getIllustDetail(illustId);
     return illust == null ? null : mapIllust(illust);
+  }
+
+  Future<ArtworkDetail?> detailFull(String illustId) async {
+    final detailFuture = _apiService.getIllustDetail(illustId);
+    final commentsFuture = comments(illustId);
+    final relatedFuture = related(illustId);
+
+    final illust = await detailFuture;
+    if (illust == null) return null;
+
+    final commentsPage = await commentsFuture;
+    final relatedPage = await relatedFuture;
+    return mapArtworkDetail(
+      illust: illust,
+      comments: commentsPage.items.take(3).toList(),
+      related: relatedPage.items,
+    );
   }
 
   Future<FeedPage<Artwork>> related(String illustId) async {

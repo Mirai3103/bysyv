@@ -6,6 +6,7 @@ import '../data/services/pixiv_auth_service.dart';
 import '../ui/features/auth/view_models/auth_controller.dart';
 import '../ui/features/auth/views/auth_screen.dart';
 import '../ui/features/auth/views/pixiv_auth_web_view_screen.dart';
+import '../ui/features/artwork_detail/views/artwork_detail_screen.dart';
 import '../ui/features/home/views/home_screen.dart';
 import '../ui/features/placeholders/views/placeholder_screen.dart';
 
@@ -48,6 +49,17 @@ final routerProvider = Provider<GoRouter>((ref) {
               ? state.extra! as PixivWebAuthMode
               : PixivWebAuthMode.login;
           return NoTransitionPage(child: PixivAuthWebViewScreen(mode: mode));
+        },
+      ),
+      GoRoute(
+        path: '/artworks/:illustId',
+        name: 'artworkDetail',
+        pageBuilder: (context, state) {
+          return NoTransitionPage(
+            child: ArtworkDetailScreen(
+              illustId: state.pathParameters['illustId'] ?? '',
+            ),
+          );
         },
       ),
       StatefulShellRoute.indexedStack(

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -20,8 +21,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  var _activeFilterIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.watch(homeViewModelProvider);
@@ -48,15 +47,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 SliverToBoxAdapter(
                   child: _FilterRow(
                     filters: state.filters,
-                    activeIndex: _activeFilterIndex.clamp(
-                      0,
-                      state.filters.length - 1,
-                    ),
-                    onChanged: (index) {
-                      setState(() {
-                        _activeFilterIndex = index;
-                      });
-                    },
+                    activeIndex: state.activeFilterIndex,
+                    onChanged: viewModel.selectFilter,
                   ).animate().fadeIn(delay: 140.ms),
                 ),
                 if (state.isLoading)
@@ -68,7 +60,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       title: 'Recommend failed',
                       message: state.errorMessage!,
                       actionLabel: 'Retry',
-                      onAction: viewModel.loadRecommended,
+                      onAction: viewModel.refresh,
                     ),
                   )
                 else if (state.isEmpty)
@@ -87,9 +79,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     sliver: SliverGrid(
                       delegate: SliverChildBuilderDelegate((context, index) {
                         final artwork = state.artwork[index];
-                        return ArtworkCard(
-                          artwork: artwork,
-                          compact: index.isOdd,
+                        return GestureDetector(
+                          key: ValueKey('artwork-card-${artwork.id}'),
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => context.push('/artworks/${artwork.id}'),
+                          child: ArtworkCard(
+                            artwork: artwork,
+                            compact: index.isOdd,
+                          ),
                         ).animate().fadeIn(delay: (180 + index * 45).ms);
                       }, childCount: state.artwork.length),
                       gridDelegate:
@@ -338,9 +335,9 @@ class _FilterRow extends StatelessWidget {
     required this.onChanged,
   });
 
-  final List<String> filters;
+  final List<HomeFilter> filters;
   final int activeIndex;
-  final ValueChanged<int> onChanged;
+  final ValueChanged<HomeFilter> onChanged;
 
   static const _gap = 8.0;
   static const _horizontalPadding = 20.0;
@@ -350,13 +347,14 @@ class _FilterRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final labels = filters.map((filter) => filter.label).toList();
     final textStyle = const TextStyle(
       fontSize: 13,
       fontWeight: FontWeight.w700,
     );
     final widths = [
-      for (final filter in filters)
-        _measureText(context, filter, textStyle) + _pillHorizontalPadding * 2,
+      for (final label in labels)
+        _measureText(context, label, textStyle) + _pillHorizontalPadding * 2,
     ];
     final activeLeft =
         _horizontalPadding +
@@ -386,7 +384,7 @@ class _FilterRow extends StatelessWidget {
                 height: _pillHeight,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: AppColors.ink,
+                    color: AppColors.primary,
                     borderRadius: BorderRadius.circular(999),
                     boxShadow: const [
                       BoxShadow(
@@ -410,10 +408,10 @@ class _FilterRow extends StatelessWidget {
                     children: [
                       for (var index = 0; index < filters.length; index++) ...[
                         _FilterPill(
-                          label: filters[index],
+                          label: labels[index],
                           width: widths[index],
                           active: activeIndex == index,
-                          onTap: () => onChanged(index),
+                          onTap: () => onChanged(filters[index]),
                         ),
                         if (index != filters.length - 1)
                           const SizedBox(width: _gap),

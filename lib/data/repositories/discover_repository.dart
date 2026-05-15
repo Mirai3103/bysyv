@@ -22,6 +22,25 @@ class DiscoverRepository {
     return response.illusts.map(_mapIllust).toList();
   }
 
+  Future<List<Artwork>> rankingArtwork() async {
+    final response = await _apiService.getIllustRanking(
+      mode: PixivApiService.rankingModeDay,
+    );
+    return response.items.map(_mapIllust).toList();
+  }
+
+  Future<List<Artwork>> originalArtwork() async {
+    final response = await _apiService.getIllustRanking(
+      mode: PixivApiService.rankingModeWeekOriginal,
+    );
+    return response.items.map(_mapIllust).toList();
+  }
+
+  Future<List<Artwork>> followingArtwork() async {
+    final response = await _apiService.getFollowIllusts();
+    return response.items.map(_mapIllust).toList();
+  }
+
   Artwork _mapIllust(PixivIllust illust) {
     return Artwork(
       id: illust.id,

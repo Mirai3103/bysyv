@@ -32,6 +32,20 @@ class PixivImageUrls {
   String? get best => original ?? large ?? medium ?? squareMedium;
 }
 
+class PixivIllustPage {
+  const PixivIllustPage({required this.imageUrls});
+
+  final PixivImageUrls imageUrls;
+
+  factory PixivIllustPage.fromJson(JsonMap json) {
+    return PixivIllustPage(
+      imageUrls: PixivImageUrls.fromJson(
+        json['image_urls'] as JsonMap? ?? const {},
+      ),
+    );
+  }
+}
+
 class PixivTag {
   const PixivTag({
     required this.name,
@@ -110,6 +124,7 @@ class PixivIllust {
     this.illustAiType = 0,
     this.totalComments = 0,
     this.originalImageUrl,
+    this.metaPages = const [],
   });
 
   final String id;
@@ -134,9 +149,11 @@ class PixivIllust {
   final int illustAiType;
   final int totalComments;
   final String? originalImageUrl;
+  final List<PixivIllustPage> metaPages;
 
   factory PixivIllust.fromJson(JsonMap json) {
     final metaSinglePage = json['meta_single_page'] as JsonMap? ?? const {};
+    final metaPages = json['meta_pages'];
     final tags = json['tags'];
 
     return PixivIllust(
@@ -166,10 +183,28 @@ class PixivIllust {
       illustAiType: json['illust_ai_type'] as int? ?? 0,
       totalComments: json['total_comments'] as int? ?? 0,
       originalImageUrl: metaSinglePage['original_image_url'] as String?,
+      metaPages: metaPages is List
+          ? metaPages
+                .whereType<JsonMap>()
+                .map(PixivIllustPage.fromJson)
+                .toList()
+          : const [],
     );
   }
 
   String? get imageUrl => imageUrls.best;
+  List<String> get pageImageUrls {
+    final pages = metaPages
+        .map((page) => page.imageUrls.best)
+        .whereType<String>()
+        .where((url) => url.isNotEmpty)
+        .toList();
+    if (pages.isNotEmpty) return pages;
+
+    final single = originalImageUrl ?? imageUrls.best;
+    return single == null || single.isEmpty ? const [] : [single];
+  }
+
   String get artistName => user.name;
 }
 

@@ -31,6 +31,8 @@ class PixivApiService {
   static const publicRestrict = 'public';
   static const privateRestrict = 'private';
   static const allRestrict = 'all';
+  static const rankingModeDay = 'day';
+  static const rankingModeWeekOriginal = 'week_original';
 
   Future<PixivRecommendResponse> getRecommendedIllusts() async {
     final page = await _getIllustPage(
