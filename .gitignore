@@ -52,3 +52,7 @@ app.*.map.json
 .codex/skills/.system/**
 !.codex/prompts/
 !.codex/prompts/**
+
+# Keystore
+android/app/*.keystore
+github_secret.txt
