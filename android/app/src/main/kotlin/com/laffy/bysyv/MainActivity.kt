@@ -1,4 +1,4 @@
-package com.example.bysiv
+package com.laffy.bysyv
 
 import io.flutter.embedding.android.FlutterActivity
 

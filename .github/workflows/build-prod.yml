@@ -1,0 +1,49 @@
+name: Build APK (prod)
+
+on:
+  push:
+    tags:
+      - 'release-*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.9'
+          channel: stable
+          cache: true
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/bysyv.keystore
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Build APK (prod release)
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: flutter build apk --flavor prod -t lib/main_prod.dart --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: bysiv-prod-${{ github.ref_name }}
+          path: build/app/outputs/flutter-apk/app-prod-release.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/app/outputs/flutter-apk/app-prod-release.apk
