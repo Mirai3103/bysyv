@@ -9,6 +9,7 @@ import '../ui/features/auth/views/pixiv_auth_web_view_screen.dart';
 import '../ui/features/artwork_detail/views/artwork_detail_screen.dart';
 import '../ui/features/home/views/home_screen.dart';
 import '../ui/features/placeholders/views/placeholder_screen.dart';
+import '../ui/features/search/views/search_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final auth = ref.read(authControllerProvider);
@@ -62,6 +63,26 @@ final routerProvider = Provider<GoRouter>((ref) {
           );
         },
       ),
+      GoRoute(
+        path: '/novels/:novelId',
+        name: 'novelDetail',
+        pageBuilder: (context, state) {
+          final id = state.pathParameters['novelId'] ?? '';
+          return NoTransitionPage(
+            child: PlaceholderScreen(title: 'Novel detail $id'),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/users/:userId',
+        name: 'userProfile',
+        pageBuilder: (context, state) {
+          final id = state.pathParameters['userId'] ?? '';
+          return NoTransitionPage(
+            child: PlaceholderScreen(title: 'User profile $id'),
+          );
+        },
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return AppTabShell(navigationShell: navigationShell);
@@ -78,20 +99,58 @@ final routerProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
-          for (final route in AppRoute.placeholderRoutes)
-            StatefulShellBranch(
-              routes: [
-                GoRoute(
-                  path: route.path,
-                  name: route.name,
-                  pageBuilder: (context, state) {
-                    return NoTransitionPage(
-                      child: PlaceholderScreen(title: route.label),
-                    );
-                  },
-                ),
-              ],
-            ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.search.path,
+                name: AppRoute.search.name,
+                pageBuilder: (context, state) {
+                  return const NoTransitionPage(child: SearchScreen());
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.news.path,
+                name: AppRoute.news.name,
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(
+                    child: PlaceholderScreen(title: AppRoute.news.label),
+                  );
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.notifications.path,
+                name: AppRoute.notifications.name,
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(
+                    child: PlaceholderScreen(
+                      title: AppRoute.notifications.label,
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoute.profile.path,
+                name: AppRoute.profile.name,
+                pageBuilder: (context, state) {
+                  return NoTransitionPage(
+                    child: PlaceholderScreen(title: AppRoute.profile.label),
+                  );
+                },
+              ),
+            ],
+          ),
         ],
       ),
     ],
@@ -113,13 +172,6 @@ enum AppRoute {
 
   static List<AppRoute> get tabRoutes => [
     home,
-    search,
-    news,
-    notifications,
-    profile,
-  ];
-
-  static List<AppRoute> get placeholderRoutes => [
     search,
     news,
     notifications,

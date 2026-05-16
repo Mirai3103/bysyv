@@ -32,6 +32,8 @@ Artwork mapIllust(api.PixivIllust illust) {
     pageCount: illust.pageCount,
     isBookmarked: illust.isBookmarked,
     xRestrict: illust.xRestrict,
+    type: illust.type,
+    aiType: illust.illustAiType,
     gradient: const [Color(0xFFE8DFFF), Color(0xFFA39ADB)],
   );
 }

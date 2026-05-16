@@ -5,6 +5,8 @@ import '../../domain/models/feed_page.dart';
 import '../../domain/models/novel.dart';
 import '../../domain/models/pixiv_creator.dart';
 import '../../domain/models/pixiv_tag.dart';
+import '../../domain/models/search_user_result.dart';
+import '../../domain/models/trend_tag.dart';
 import '../services/pixiv_api_service.dart';
 import 'pixiv_domain_mappers.dart';
 
@@ -72,9 +74,52 @@ class SearchRepository {
     );
   }
 
+  Future<FeedPage<SearchUserResult>> userResults(String word) async {
+    final page = await _apiService.searchUsers(word);
+    return FeedPage(
+      items: page.items
+          .map(
+            (preview) => SearchUserResult(
+              creator: mapCreator(preview.user),
+              previewArtworks: preview.illusts.map(mapIllust).toList(),
+            ),
+          )
+          .toList(),
+      nextUrl: page.nextUrl,
+    );
+  }
+
+  Future<FeedPage<Artwork>> nextIllusts(String nextUrl) async {
+    return mapPage(await _apiService.getNextIllustPage(nextUrl), mapIllust);
+  }
+
+  Future<FeedPage<Novel>> nextNovels(String nextUrl) async {
+    return mapPage(await _apiService.getNextNovelPage(nextUrl), mapNovel);
+  }
+
+  Future<FeedPage<SearchUserResult>> nextUsers(String nextUrl) async {
+    final page = await _apiService.getNextUserPreviewPage(nextUrl);
+    return FeedPage(
+      items: page.items
+          .map(
+            (preview) => SearchUserResult(
+              creator: mapCreator(preview.user),
+              previewArtworks: preview.illusts.map(mapIllust).toList(),
+            ),
+          )
+          .toList(),
+      nextUrl: page.nextUrl,
+    );
+  }
+
   Future<List<PixivTag>> autocompleteTags(String word) async {
     final tags = await _apiService.autocompleteTags(word);
     return tags.map(mapTag).toList();
+  }
+
+  Future<List<TrendTag>> trendingIllustTags() async {
+    final tags = await _apiService.getTrendingIllustTags();
+    return tags.map(mapTrendTag).toList();
   }
 
   Future<FeedPage<Artwork>> popularIllustPreview({

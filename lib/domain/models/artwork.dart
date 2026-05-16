@@ -11,6 +11,8 @@ class Artwork {
     this.pageCount = 1,
     this.isBookmarked = false,
     this.xRestrict = 0,
+    this.type = 'illust',
+    this.aiType = 0,
     this.isSpotlight = false,
   });
 
@@ -23,6 +25,8 @@ class Artwork {
   final int pageCount;
   final bool isBookmarked;
   final int xRestrict;
+  final String type;
+  final int aiType;
   final bool isSpotlight;
 
   static const samples = [

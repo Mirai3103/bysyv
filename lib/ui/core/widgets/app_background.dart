@@ -10,15 +10,7 @@ class AppBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        color: AppColors.bg,
-        gradient: RadialGradient(
-          center: Alignment(-0.78, -0.9),
-          radius: 1.08,
-          colors: [Color(0x1A4C5FEF), Color(0x00FCFBF8)],
-          stops: [0, 1],
-        ),
-      ),
+      decoration: const BoxDecoration(color: AppColors.bg),
       child: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: RadialGradient(

@@ -28,78 +28,70 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       body: AppBackground(
-        child: SafeArea(
-          child: RefreshIndicator(
-            onRefresh: viewModel.refresh,
-            child: CustomScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: [
-                SliverPersistentHeader(
-                  pinned: true,
-                  delegate: _StickyHomeHeaderDelegate(),
-                ),
+        child: RefreshIndicator(
+          onRefresh: viewModel.refresh,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StickyHomeHeaderDelegate(),
+              ),
+              SliverToBoxAdapter(
+                child: _FilterRow(
+                  filters: state.filters,
+                  activeIndex: state.activeFilterIndex,
+                  onChanged: viewModel.selectFilter,
+                ).animate().fadeIn(delay: 80.ms),
+              ),
+              if (state.isLoading)
+                const _ArtworkSkeletonGrid()
+              else if (state.hasError)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _FeedMessage(
+                    title: 'Recommend failed',
+                    message: state.errorMessage!,
+                    actionLabel: 'Retry',
+                    onAction: viewModel.refresh,
+                  ),
+                )
+              else if (state.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _FeedMessage(
+                    title: 'No recommendations',
+                    message: 'Pull to refresh and try again.',
+                    actionLabel: 'Refresh',
+                    onAction: viewModel.refresh,
+                  ),
+                )
+              else
                 SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  sliver: SliverToBoxAdapter(
-                    child: _SearchPill().animate().fadeIn(delay: 80.ms),
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 128),
+                  sliver: SliverGrid(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final artwork = state.artwork[index];
+                      return GestureDetector(
+                        key: ValueKey('artwork-card-${artwork.id}'),
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => context.push('/artworks/${artwork.id}'),
+                        child: ArtworkCard(
+                          artwork: artwork,
+                          compact: index.isOdd,
+                        ),
+                      ).animate().fadeIn(delay: (180 + index * 45).ms);
+                    }, childCount: state.artwork.length),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 14,
+                          crossAxisSpacing: 14,
+                          childAspectRatio: 0.72,
+                        ),
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: _FilterRow(
-                    filters: state.filters,
-                    activeIndex: state.activeFilterIndex,
-                    onChanged: viewModel.selectFilter,
-                  ).animate().fadeIn(delay: 140.ms),
-                ),
-                if (state.isLoading)
-                  const _ArtworkSkeletonGrid()
-                else if (state.hasError)
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: _FeedMessage(
-                      title: 'Recommend failed',
-                      message: state.errorMessage!,
-                      actionLabel: 'Retry',
-                      onAction: viewModel.refresh,
-                    ),
-                  )
-                else if (state.isEmpty)
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: _FeedMessage(
-                      title: 'No recommendations',
-                      message: 'Pull to refresh and try again.',
-                      actionLabel: 'Refresh',
-                      onAction: viewModel.refresh,
-                    ),
-                  )
-                else
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 128),
-                    sliver: SliverGrid(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final artwork = state.artwork[index];
-                        return GestureDetector(
-                          key: ValueKey('artwork-card-${artwork.id}'),
-                          behavior: HitTestBehavior.opaque,
-                          onTap: () => context.push('/artworks/${artwork.id}'),
-                          child: ArtworkCard(
-                            artwork: artwork,
-                            compact: index.isOdd,
-                          ),
-                        ).animate().fadeIn(delay: (180 + index * 45).ms);
-                      }, childCount: state.artwork.length),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 14,
-                            crossAxisSpacing: 14,
-                            childAspectRatio: 0.72,
-                          ),
-                    ),
-                  ),
-              ],
-            ),
+            ],
           ),
         ),
       ),
@@ -210,8 +202,8 @@ class _Header extends StatelessWidget {
     final blur = lerpDouble(0, 28, progress)!;
     final titleSize = lerpDouble(32, 22, progress)!;
     final avatarRadius = lerpDouble(20, 17, progress)!;
-    final topPadding = lerpDouble(18, 8, progress)!;
-    final bottomPadding = lerpDouble(8, 7, progress)!;
+    final topPadding = lerpDouble(4, 0, progress)!;
+    final bottomPadding = lerpDouble(6, 5, progress)!;
 
     return ClipRect(
       child: BackdropFilter(
@@ -235,27 +227,6 @@ class _Header extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ClipRect(
-                        child: Align(
-                          heightFactor: lerpDouble(1, 0, progress)!,
-                          alignment: Alignment.topLeft,
-                          child: Transform.translate(
-                            offset: Offset(0, -8 * progress),
-                            child: Opacity(
-                              opacity: 1 - progress,
-                              child: Text(
-                                'TODAY',
-                                style: Theme.of(context).textTheme.labelMedium
-                                    ?.copyWith(
-                                      letterSpacing: 0.8,
-                                      color: AppColors.inkSub,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: lerpDouble(6, 0, progress)!),
                       Text(
                         'Discover',
                         style: Theme.of(context).textTheme.headlineLarge
@@ -282,47 +253,6 @@ class _Header extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _SearchPill extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GlassPanel(
-      radius: 999,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-      strong: true,
-      child: Row(
-        children: const [
-          Icon(Icons.search_rounded, color: AppColors.inkSub, size: 20),
-          SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'Search artists, tags...',
-              style: TextStyle(
-                color: AppColors.inkDim,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              shape: BoxShape.circle,
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(7),
-              child: Icon(
-                Icons.auto_awesome_rounded,
-                color: Colors.white,
-                size: 14,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
