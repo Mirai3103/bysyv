@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -107,7 +106,7 @@ class _NewsHeader extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             strong: true,
             child: const Icon(
-              LucideIcons.newspaper,
+              Icons.article_outlined,
               color: AppColors.primary,
               size: 20,
             ),
@@ -468,17 +467,17 @@ class _NovelCard extends StatelessWidget {
                     Row(
                       children: [
                         _TinyMeta(
-                          icon: LucideIcons.bookOpen,
+                          icon: Icons.menu_book,
                           label: _formatCount(novel.textLength),
                         ),
                         const SizedBox(width: 10),
                         _TinyMeta(
-                          icon: LucideIcons.eye,
+                          icon: Icons.visibility_outlined,
                           label: _formatCount(novel.totalView),
                         ),
                         const SizedBox(width: 10),
                         _TinyMeta(
-                          icon: LucideIcons.bookmark,
+                          icon: Icons.bookmark_border,
                           label: _formatCount(novel.bookmarks),
                         ),
                       ],

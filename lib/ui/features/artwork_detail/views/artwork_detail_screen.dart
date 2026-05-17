@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -208,7 +207,7 @@ class _DetailTopBar extends StatelessWidget {
         child: Row(
           children: [
             _GlassIconButton(
-              icon: LucideIcons.chevronLeft,
+              icon: Icons.chevron_left,
               tooltip: 'Back',
               onTap: () => context.pop(),
             ),
@@ -232,13 +231,13 @@ class _DetailTopBar extends StatelessWidget {
               ),
             const Spacer(),
             _GlassIconButton(
-              icon: LucideIcons.share,
+              icon: Icons.share_outlined,
               tooltip: 'Share',
               onTap: () {},
             ),
             const SizedBox(width: 8),
             _GlassIconButton(
-              icon: LucideIcons.ellipsis,
+              icon: Icons.more_horiz,
               tooltip: 'More',
               onTap: () {},
             ),
@@ -312,20 +311,20 @@ class _MetaBlock extends StatelessWidget {
             runSpacing: 8,
             children: [
               _Stat(
-                icon: LucideIcons.eye,
+                icon: Icons.visibility_outlined,
                 label: _formatCount(detail.totalView),
               ),
               _Stat(
-                icon: LucideIcons.heart,
+                icon: Icons.favorite_border,
                 label: _formatCount(detail.totalBookmarks),
               ),
               _Stat(
-                icon: LucideIcons.bookmark,
+                icon: Icons.bookmark_border,
                 label: '${_formatCount(detail.totalBookmarks)} saved',
               ),
               if (detail.createDate != null)
                 _Stat(
-                  icon: LucideIcons.calendar,
+                  icon: Icons.calendar_today,
                   label: _formatDate(detail.createDate!),
                 ),
             ],
@@ -507,7 +506,7 @@ class _CommentsSection extends StatelessWidget {
               ),
               SizedBox(width: 2),
               Icon(
-                LucideIcons.chevronRight,
+                Icons.chevron_right,
                 color: AppColors.primary,
                 size: 14,
               ),
@@ -705,15 +704,15 @@ class _ActionBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _ActionButton(
-            icon: liked ? LucideIcons.heart : LucideIcons.heart,
+            icon: liked ? Icons.favorite : Icons.favorite_border,
             label: _formatCount(artwork.bookmarks),
             active: liked,
             onTap: onLike,
           ),
           _ActionButton(
             icon: artwork.isBookmarked
-                ? LucideIcons.bookmarkCheck
-                : LucideIcons.bookmark,
+                ? Icons.bookmark
+                : Icons.bookmark_border,
             label: isBookmarking
                 ? 'Saving'
                 : artwork.isBookmarked
@@ -723,7 +722,7 @@ class _ActionBar extends StatelessWidget {
             onTap: isBookmarking ? null : onBookmark,
           ),
           _ActionButton(
-            icon: LucideIcons.messageCircle,
+            icon: Icons.chat_bubble_outline,
             label: 'Comment',
             active: false,
             onTap: () {},
@@ -853,7 +852,7 @@ class _Avatar extends StatelessWidget {
             ? const ColoredBox(
                 color: AppColors.primarySoft,
                 child: Icon(
-                  LucideIcons.user,
+                  Icons.person_outline,
                   color: AppColors.primary,
                   size: 18,
                 ),
@@ -865,7 +864,7 @@ class _Avatar extends StatelessWidget {
                 errorWidget: (context, url, error) => const ColoredBox(
                   color: AppColors.primarySoft,
                   child: Icon(
-                    LucideIcons.user,
+                    Icons.person_outline,
                     color: AppColors.primary,
                     size: 18,
                   ),
@@ -944,7 +943,7 @@ class _DetailError extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(
-                LucideIcons.circleAlert,
+                Icons.error_outline,
                 color: AppColors.primary,
                 size: 34,
               ),
@@ -988,7 +987,7 @@ class _InlineError extends StatelessWidget {
       strong: true,
       child: Row(
         children: [
-          const Icon(LucideIcons.circleAlert, color: Color(0xFFE34B61)),
+          const Icon(Icons.error_outline, color: Color(0xFFE34B61)),
           const SizedBox(width: 8),
           Expanded(
             child: Text(

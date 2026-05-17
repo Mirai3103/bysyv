@@ -55,7 +55,6 @@
 
 **Infrastructure:**
 - flutter_animate 4.5.2 - UI motion in `lib/ui/core/widgets/app_tab_shell.dart`, `lib/ui/core/widgets/app_bottom_sheet_overlay.dart`, `lib/ui/features/auth/views/auth_screen.dart`, `lib/ui/features/home/views/home_screen.dart`, and `lib/ui/features/search/views/search_screen.dart`.
-- lucide_icons_flutter 3.1.13 - icon set in shared and feature widgets under `lib/ui/`.
 - skeletonizer 2.1.3 - loading skeletons in `lib/ui/features/home/views/home_screen.dart`, `lib/ui/features/search/views/search_screen.dart`, and `lib/ui/features/artwork_detail/views/artwork_detail_screen.dart`.
 - flutter_form_builder 10.3.0+2 - declared in `pubspec.yaml`; no direct usage detected in `lib/`.
 - intl 0.20.2 - declared in `pubspec.yaml`; no direct usage detected in `lib/`.

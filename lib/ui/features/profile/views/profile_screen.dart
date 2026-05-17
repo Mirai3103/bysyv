@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -111,16 +110,16 @@ class _ProfileContent extends StatelessWidget {
             title: 'Content',
             items: const [
               _MenuItemData(
-                icon: LucideIcons.bookmark,
+                icon: Icons.bookmark_border,
                 label: 'Bookmarks',
                 subLabel: 'Illustrations, novels',
               ),
               _MenuItemData(
-                icon: LucideIcons.history,
+                icon: Icons.history,
                 label: 'Browsing History',
               ),
               _MenuItemData(
-                icon: LucideIcons.eye,
+                icon: Icons.visibility_outlined,
                 label: 'My Works',
                 subLabel: 'Illustrations and novels',
               ),
@@ -131,22 +130,22 @@ class _ProfileContent extends StatelessWidget {
             title: 'Settings',
             items: const [
               _MenuItemData(
-                icon: LucideIcons.circleUser,
+                icon: Icons.account_circle_outlined,
                 label: 'Account Info',
                 subLabel: 'Email, password, linked accounts',
               ),
               _MenuItemData(
-                icon: LucideIcons.settings,
+                icon: Icons.settings_outlined,
                 label: 'Preferences',
                 subLabel: 'Language, display, notifications',
               ),
               _MenuItemData(
-                icon: LucideIcons.star,
+                icon: Icons.star_border,
                 label: 'Favorites',
                 subLabel: 'Tags, users, categories',
               ),
               _MenuItemData(
-                icon: LucideIcons.volumeX,
+                icon: Icons.volume_off_outlined,
                 label: 'Mute Settings',
                 subLabel: 'Muted tags, users',
               ),
@@ -156,7 +155,7 @@ class _ProfileContent extends StatelessWidget {
           _MenuSection(
             items: [
               _MenuItemData(
-                icon: LucideIcons.logOut,
+                icon: Icons.logout,
                 label: 'Log Out',
                 danger: true,
                 onTap: onLogout,
@@ -317,7 +316,7 @@ class _AvatarFallback extends StatelessWidget {
           colors: [Color(0xFFE8DFFF), Color(0xFFA39ADB)],
         ),
       ),
-      child: Icon(LucideIcons.user, color: Colors.white, size: 34),
+      child: Icon(Icons.person_outline, color: Colors.white, size: 34),
     );
   }
 }
@@ -482,7 +481,7 @@ class _MenuRow extends StatelessWidget {
               ),
               if (!data.danger)
                 const Icon(
-                  LucideIcons.chevronRight,
+                  Icons.chevron_right,
                   color: AppColors.inkSubSub,
                   size: 18,
                 ),

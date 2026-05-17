@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../app/router.dart';
 import '../../../core/theme/app_colors.dart';
@@ -164,8 +163,8 @@ class _TabDestination {
 }
 
 const _tabs = [
-  _TabDestination(route: AppRoute.home, icon: LucideIcons.house),
-  _TabDestination(route: AppRoute.search, icon: LucideIcons.search),
-  _TabDestination(route: AppRoute.news, icon: LucideIcons.newspaper),
-  _TabDestination(route: AppRoute.profile, icon: LucideIcons.circleUser),
+  _TabDestination(route: AppRoute.home, icon: Icons.home_outlined),
+  _TabDestination(route: AppRoute.search, icon: Icons.search),
+  _TabDestination(route: AppRoute.news, icon: Icons.article_outlined),
+  _TabDestination(route: AppRoute.profile, icon: Icons.account_circle_outlined),
 ];

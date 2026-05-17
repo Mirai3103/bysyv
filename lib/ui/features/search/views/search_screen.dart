@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -397,7 +396,7 @@ class _SearchHeader extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
                 prefixIcon: Icon(
-                  LucideIcons.search,
+                  Icons.search,
                   color: focused ? AppColors.primary : AppColors.inkSub,
                   size: 18,
                 ),
@@ -408,7 +407,7 @@ class _SearchHeader extends StatelessWidget {
                         child: IconButton(
                           tooltip: 'Clear search',
                           onPressed: onClear,
-                          icon: const Icon(LucideIcons.x, size: 16),
+                          icon: const Icon(Icons.close, size: 16),
                           color: AppColors.primary,
                           style: IconButton.styleFrom(
                             backgroundColor: AppColors.primarySoft,
@@ -606,7 +605,7 @@ class _RecentBadgeState extends State<_RecentBadge> {
                       width: 18,
                       height: 18,
                       child: Icon(
-                        LucideIcons.x,
+                        Icons.close,
                         size: 10,
                         color: AppColors.inkDim,
                       ),
@@ -657,7 +656,7 @@ class _AutocompletePanel extends StatelessWidget {
                   ListTile(
                     dense: true,
                     leading: const Icon(
-                      LucideIcons.search,
+                      Icons.search,
                       color: AppColors.inkSub,
                       size: 17,
                     ),
@@ -924,8 +923,8 @@ class _ResultHeaderSliver extends StatelessWidget {
                       _IconGlassButton(
                         tooltip: 'Filter',
                         icon: state.filters.hasActiveFilters
-                            ? LucideIcons.listFilterPlus
-                            : LucideIcons.listFilter,
+                            ? Icons.tune
+                            : Icons.filter_list,
                         onTap: onFilterTap,
                       ),
                     ],
@@ -1045,7 +1044,7 @@ class _SortMenu extends StatelessWidget {
           color: AppColors.glassStrong,
           borderRadius: BorderRadius.circular(999),
         ),
-        child: const Icon(LucideIcons.arrowDownUp, size: 18),
+        child: const Icon(Icons.swap_vert, size: 18),
       ),
     );
   }
@@ -1499,7 +1498,7 @@ class _SearchMessage extends StatelessWidget {
       radius: 24,
       child: Column(
         children: [
-          const Icon(LucideIcons.trendingUp, color: AppColors.primary),
+          const Icon(Icons.trending_up, color: AppColors.primary),
           const SizedBox(height: 10),
           Text(
             title,
@@ -1517,7 +1516,7 @@ class _SearchMessage extends StatelessWidget {
           const SizedBox(height: 14),
           TextButton.icon(
             onPressed: onRetry,
-            icon: const Icon(LucideIcons.refreshCcw, size: 16),
+            icon: const Icon(Icons.refresh, size: 16),
             label: const Text('Retry'),
           ),
         ],

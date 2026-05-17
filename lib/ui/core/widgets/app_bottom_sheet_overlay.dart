@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import 'app_button.dart';
@@ -71,7 +70,7 @@ class AppBottomSheetOverlay extends StatelessWidget {
                         ),
                         AppButton(
                           label: 'Back',
-                          icon: LucideIcons.chevronLeft,
+                          icon: Icons.chevron_left,
                           onPressed: onBack,
                           variant: AppButtonVariant.ghost,
                           fullWidth: false,

@@ -84,7 +84,7 @@
 - Purpose: Render screens and reusable widgets from state supplied by view models.
 - Location: `lib/ui/features/`, `lib/ui/core/widgets/`
 - Contains: Feature screens, bottom tab shell, app background, glass panel, button, text field, and artwork card primitives.
-- Depends on: Feature view models, domain models, `AppColors`, `AppTheme`, `go_router`, `flutter_animate`, `lucide_icons_flutter`, and `cached_network_image`.
+- Depends on: Feature view models, domain models, `AppColors`, `AppTheme`, `go_router`, `flutter_animate`, `material icon`, and `cached_network_image`.
 - Used by: Router pages and tests.
 
 **ViewModel Layer:**

@@ -221,7 +221,7 @@ bysyv/
 **New Tab:**
 - Add enum value/path/label to `AppRoute` in `lib/app/router.dart`.
 - Add a `StatefulShellBranch` for the tab in `lib/app/router.dart`.
-- Add a `_TabDestination` entry with a Lucide icon in `lib/ui/core/widgets/app_tab_shell.dart`.
+- Add a `_TabDestination`  in `lib/ui/core/widgets/app_tab_shell.dart`.
 - Put the tab screen under `lib/ui/features/<feature_name>/views/`.
 
 **New Top-Level Detail Route:**
@@ -261,7 +261,6 @@ bysyv/
 **New Shared Widget:**
 - Implementation: `lib/ui/core/widgets/<widget_name>.dart`
 - Use `AppColors` and existing primitives from `lib/ui/core/widgets/`.
-- Prefer `lucide_icons_flutter` for new icons.
 - Keep feature-specific widgets private inside the feature screen file until reused by multiple features.
 
 **New Theme Token:**

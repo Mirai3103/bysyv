@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/services/pixiv_auth_service.dart';
@@ -302,7 +301,7 @@ class _AuthActions extends StatelessWidget {
                   label: 'Login with token',
                   onPressed: onToken,
                   variant: AppButtonVariant.ghost,
-                  icon: LucideIcons.key,
+                  icon: Icons.key,
                   height: 46,
                 ),
                 const SizedBox(height: 18),

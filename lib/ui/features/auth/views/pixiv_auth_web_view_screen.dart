@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -55,7 +54,7 @@ class _PixivAuthWebViewScreenState
         elevation: 0,
         leading: IconButton(
           tooltip: 'Back',
-          icon: const Icon(LucideIcons.arrowLeft),
+          icon: const Icon(Icons.arrow_back),
           color: AppColors.ink,
           onPressed: () => context.pop(),
         ),
@@ -69,7 +68,7 @@ class _PixivAuthWebViewScreenState
         actions: [
           IconButton(
             tooltip: 'Refresh',
-            icon: const Icon(LucideIcons.refreshCw),
+            icon: const Icon(Icons.refresh),
             color: AppColors.ink,
             onPressed: _webViewController?.reload,
           ),
@@ -228,7 +227,7 @@ class _AuthErrorBanner extends StatelessWidget {
         padding: const EdgeInsets.all(14),
         child: Row(
           children: [
-            const Icon(LucideIcons.circleAlert, color: Color(0xFFE34B61)),
+            const Icon(Icons.error_outline, color: Color(0xFFE34B61)),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -257,7 +256,7 @@ class _WebViewFallback extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(LucideIcons.globeLock, color: AppColors.primary),
+            const Icon(Icons.security, color: AppColors.primary),
             const SizedBox(height: 14),
             const Text(
               'WebView is not available in this environment.',
