@@ -167,6 +167,5 @@ const _tabs = [
   _TabDestination(route: AppRoute.home, icon: LucideIcons.house),
   _TabDestination(route: AppRoute.search, icon: LucideIcons.search),
   _TabDestination(route: AppRoute.news, icon: LucideIcons.newspaper),
-  _TabDestination(route: AppRoute.notifications, icon: LucideIcons.bell),
   _TabDestination(route: AppRoute.profile, icon: LucideIcons.circleUser),
 ];

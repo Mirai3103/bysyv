@@ -14,7 +14,9 @@ void main() {
     expect(find.text('Search tags, titles, users...'), findsOneWidget);
     expect(find.text('Trending tags'), findsOneWidget);
 
-    for (final tab in ['News', 'Notification', 'Profile']) {
+    expect(find.byTooltip('Notification'), findsNothing);
+
+    for (final tab in ['News', 'Profile']) {
       await tester.tap(find.byTooltip(tab));
       await tester.pumpAndSettle();
 

@@ -1,6 +1,8 @@
 import 'package:bysiv/data/repositories/artwork_repository.dart';
 import 'package:bysiv/data/repositories/auth_session_store.dart';
 import 'package:bysiv/data/repositories/discover_repository.dart';
+import 'package:bysiv/data/repositories/discovery_repository.dart';
+import 'package:bysiv/data/repositories/novel_repository.dart';
 import 'package:bysiv/data/repositories/search_recent_store.dart';
 import 'package:bysiv/data/repositories/search_repository.dart';
 import 'package:bysiv/data/repositories/user_repository.dart';
@@ -14,6 +16,7 @@ import 'package:bysiv/domain/models/novel.dart';
 import 'package:bysiv/domain/models/pixiv_comment.dart';
 import 'package:bysiv/domain/models/pixiv_creator.dart';
 import 'package:bysiv/domain/models/pixiv_tag.dart';
+import 'package:bysiv/domain/models/spotlight_article.dart';
 import 'package:bysiv/domain/models/search_user_result.dart';
 import 'package:bysiv/domain/models/trend_tag.dart';
 import 'package:dio/dio.dart';
@@ -108,6 +111,27 @@ class FakeDiscoverRepository extends DiscoverRepository {
 }
 
 // ---------------------------------------------------------------------------
+// Fake discovery repository
+// ---------------------------------------------------------------------------
+
+class FakeDiscoveryRepository extends DiscoveryRepository {
+  FakeDiscoveryRepository() : super(apiService: PixivApiService(dio: Dio()));
+
+  @override
+  Future<FeedPage<SpotlightArticle>> spotlightArticles({
+    String category = 'all',
+  }) async => const FeedPage(
+    items: [
+      SpotlightArticle(
+        id: 'article-1',
+        title: 'Spotlight Article',
+        pureTitle: 'Spotlight Article',
+      ),
+    ],
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Fake artwork repository
 // ---------------------------------------------------------------------------
 
@@ -167,6 +191,34 @@ class FakeArtworkRepository extends ArtworkRepository {
 
   @override
   Future<bool> deleteBookmark(String illustId) async => false;
+
+  @override
+  Future<FeedPage<Artwork>> recommendedIllusts() async {
+    return const FeedPage(items: Artwork.samples);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Fake novel repository
+// ---------------------------------------------------------------------------
+
+class FakeNovelRepository extends NovelRepository {
+  FakeNovelRepository() : super(apiService: PixivApiService(dio: Dio()));
+
+  @override
+  Future<FeedPage<Novel>> recommended() async => const FeedPage(
+    items: [
+      Novel(
+        id: 'novel-1',
+        title: 'Sample Novel',
+        author: PixivCreator(id: 'author-1', name: 'Aki', account: 'aki'),
+        bookmarks: 450,
+        caption: 'Sample caption',
+        textLength: 12000,
+        totalView: 8200,
+      ),
+    ],
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -263,6 +315,14 @@ class FakeSearchRepository extends SearchRepository {
 
 class FakeUserRepository extends UserRepository {
   FakeUserRepository() : super(apiService: PixivApiService(dio: Dio()));
+
+  @override
+  Future<PixivCreator?> detail(String userId) async => const PixivCreator(
+    id: '123',
+    name: 'Tester',
+    account: 'tester',
+    profile: {'total_illusts': 3, 'total_follow_users': 12},
+  );
 
   @override
   Future<bool> follow({

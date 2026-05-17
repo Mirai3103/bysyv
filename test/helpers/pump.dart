@@ -3,6 +3,8 @@ import 'package:bysiv/core/theme/app_theme.dart';
 import 'package:bysiv/data/repositories/artwork_repository.dart';
 import 'package:bysiv/data/repositories/auth_session_store.dart';
 import 'package:bysiv/data/repositories/discover_repository.dart';
+import 'package:bysiv/data/repositories/discovery_repository.dart';
+import 'package:bysiv/data/repositories/novel_repository.dart';
 import 'package:bysiv/data/repositories/search_recent_store.dart';
 import 'package:bysiv/data/repositories/search_repository.dart';
 import 'package:bysiv/data/repositories/user_repository.dart';
@@ -28,7 +30,9 @@ Future<void> pumpApp(
           FakeAuthSessionStore(session),
         ),
         discoverRepositoryProvider.overrideWithValue(FakeDiscoverRepository()),
+        discoveryRepositoryProvider.overrideWithValue(FakeDiscoveryRepository()),
         artworkRepositoryProvider.overrideWithValue(FakeArtworkRepository()),
+        novelRepositoryProvider.overrideWithValue(FakeNovelRepository()),
         userRepositoryProvider.overrideWithValue(FakeUserRepository()),
         searchRepositoryProvider.overrideWithValue(FakeSearchRepository()),
         searchRecentStoreProvider.overrideWithValue(
@@ -46,7 +50,9 @@ Future<void> pumpHome(WidgetTester tester) async {
     ProviderScope(
       overrides: [
         discoverRepositoryProvider.overrideWithValue(FakeDiscoverRepository()),
+        discoveryRepositoryProvider.overrideWithValue(FakeDiscoveryRepository()),
         artworkRepositoryProvider.overrideWithValue(FakeArtworkRepository()),
+        novelRepositoryProvider.overrideWithValue(FakeNovelRepository()),
         userRepositoryProvider.overrideWithValue(FakeUserRepository()),
         searchRepositoryProvider.overrideWithValue(FakeSearchRepository()),
         searchRecentStoreProvider.overrideWithValue(FakeSearchRecentStore()),

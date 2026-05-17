@@ -8,7 +8,9 @@ import '../ui/features/auth/views/auth_screen.dart';
 import '../ui/features/auth/views/pixiv_auth_web_view_screen.dart';
 import '../ui/features/artwork_detail/views/artwork_detail_screen.dart';
 import '../ui/features/home/views/home_screen.dart';
+import '../ui/features/news/views/news_screen.dart';
 import '../ui/features/placeholders/views/placeholder_screen.dart';
+import '../ui/features/profile/views/profile_screen.dart';
 import '../ui/features/search/views/search_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -116,24 +118,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: AppRoute.news.path,
                 name: AppRoute.news.name,
                 pageBuilder: (context, state) {
-                  return NoTransitionPage(
-                    child: PlaceholderScreen(title: AppRoute.news.label),
-                  );
-                },
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoute.notifications.path,
-                name: AppRoute.notifications.name,
-                pageBuilder: (context, state) {
-                  return NoTransitionPage(
-                    child: PlaceholderScreen(
-                      title: AppRoute.notifications.label,
-                    ),
-                  );
+                  return const NoTransitionPage(child: NewsScreen());
                 },
               ),
             ],
@@ -144,9 +129,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: AppRoute.profile.path,
                 name: AppRoute.profile.name,
                 pageBuilder: (context, state) {
-                  return NoTransitionPage(
-                    child: PlaceholderScreen(title: AppRoute.profile.label),
-                  );
+                  return const NoTransitionPage(child: ProfileScreen());
                 },
               ),
             ],
@@ -162,7 +145,6 @@ enum AppRoute {
   home('/home', 'Home'),
   search('/search', 'Search'),
   news('/news', 'News'),
-  notifications('/notifications', 'Notification'),
   profile('/profile', 'Profile');
 
   const AppRoute(this.path, this.label);
@@ -170,11 +152,5 @@ enum AppRoute {
   final String path;
   final String label;
 
-  static List<AppRoute> get tabRoutes => [
-    home,
-    search,
-    news,
-    notifications,
-    profile,
-  ];
+  static List<AppRoute> get tabRoutes => [home, search, news, profile];
 }
