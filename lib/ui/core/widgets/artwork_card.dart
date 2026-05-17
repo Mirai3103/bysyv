@@ -89,46 +89,8 @@ class ArtworkCard extends StatelessWidget {
                       child: _Badge(label: 'SPOTLIGHT'),
                     ),
                   Positioned(
-                    left: 12,
-                    right: 12,
-                    bottom: 12,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          artwork.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: artwork.isSpotlight ? 19 : 14,
-                            fontWeight: FontWeight.w800,
-                            height: 1.05,
-                            shadows: const [
-                              Shadow(
-                                color: Color(0x66000000),
-                                blurRadius: 4,
-                                offset: Offset(0, 1),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${artwork.artist}  ·  ${(artwork.bookmarks / 1000).toStringAsFixed(1)}k',
-                          style: const TextStyle(
-                            color: Color(0xD9FFFFFF),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    top: 12,
-                    right: 12,
+                    bottom: 4,
+                    right: 4,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: const Color(0xCCFFFFFF),

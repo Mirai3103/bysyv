@@ -34,7 +34,7 @@ final newsViewModelProvider = ChangeNotifierProvider<NewsViewModel>((ref) {
 
 class NewsState {
   const NewsState({
-    this.feedTab = NewsFeedTab.recommended,
+    this.feedTab = NewsFeedTab.following,
     this.contentType = NewsContentType.artworks,
     this.articles = const [],
     this.artworks = const [],
@@ -52,8 +52,9 @@ class NewsState {
   final String? errorMessage;
 
   bool get hasError => errorMessage != null;
-  bool get isEmpty =>
-      contentType == NewsContentType.artworks ? artworks.isEmpty : novels.isEmpty;
+  bool get isEmpty => contentType == NewsContentType.artworks
+      ? artworks.isEmpty
+      : novels.isEmpty;
 
   NewsState copyWith({
     NewsFeedTab? feedTab,

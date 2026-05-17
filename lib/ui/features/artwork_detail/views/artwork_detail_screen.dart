@@ -213,22 +213,15 @@ class _DetailTopBar extends StatelessWidget {
             ),
             const Spacer(),
             if (totalPages > 1)
-              GlassPanel(
-                radius: 999,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 7,
-                ),
-                strong: true,
-                child: Text(
-                  '$activePage / $totalPages',
-                  style: const TextStyle(
-                    color: AppColors.ink,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                  ),
+              Text(
+                '$activePage / $totalPages',
+                style: const TextStyle(
+                  color: AppColors.ink,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
+
             const Spacer(),
             _GlassIconButton(
               icon: Icons.share_outlined,
@@ -505,11 +498,7 @@ class _CommentsSection extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 2),
-              Icon(
-                Icons.chevron_right,
-                color: AppColors.primary,
-                size: 14,
-              ),
+              Icon(Icons.chevron_right, color: AppColors.primary, size: 14),
             ],
           ),
           const SizedBox(height: 14),
@@ -710,9 +699,7 @@ class _ActionBar extends StatelessWidget {
             onTap: onLike,
           ),
           _ActionButton(
-            icon: artwork.isBookmarked
-                ? Icons.bookmark
-                : Icons.bookmark_border,
+            icon: artwork.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
             label: isBookmarking
                 ? 'Saving'
                 : artwork.isBookmarked

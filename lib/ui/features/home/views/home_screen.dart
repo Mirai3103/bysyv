@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +12,7 @@ import '../../../../domain/models/artwork.dart';
 import '../../../core/widgets/app_background.dart';
 import '../../../core/widgets/artwork_card.dart';
 import '../../../core/widgets/glass_panel.dart';
+import '../../auth/view_models/auth_controller.dart';
 import '../view_models/home_view_model.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -25,6 +27,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final viewModel = ref.watch(homeViewModelProvider);
     final state = viewModel.state;
+    final avatarUrl = ref.watch(authControllerProvider).session?.avatarUrl;
 
     return Scaffold(
       body: AppBackground(
@@ -35,7 +38,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             slivers: [
               SliverPersistentHeader(
                 pinned: true,
-                delegate: _StickyHomeHeaderDelegate(),
+                delegate: _StickyHomeHeaderDelegate(avatarUrl: avatarUrl),
               ),
               SliverToBoxAdapter(
                 child: _FilterRow(
@@ -167,8 +170,12 @@ class _FeedMessage extends StatelessWidget {
 }
 
 class _StickyHomeHeaderDelegate extends SliverPersistentHeaderDelegate {
+  const _StickyHomeHeaderDelegate({required this.avatarUrl});
+
   static const _maxHeaderExtent = 88.0;
   static const _minHeaderExtent = 64.0;
+
+  final String? avatarUrl;
 
   @override
   double get maxExtent => _maxHeaderExtent;
@@ -184,17 +191,20 @@ class _StickyHomeHeaderDelegate extends SliverPersistentHeaderDelegate {
   ) {
     final t = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
 
-    return _Header(progress: t);
+    return _Header(progress: t, avatarUrl: avatarUrl);
   }
 
   @override
-  bool shouldRebuild(covariant _StickyHomeHeaderDelegate oldDelegate) => false;
+  bool shouldRebuild(covariant _StickyHomeHeaderDelegate oldDelegate) {
+    return oldDelegate.avatarUrl != avatarUrl;
+  }
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.progress});
+  const _Header({required this.progress, required this.avatarUrl});
 
   final double progress;
+  final String? avatarUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -235,17 +245,32 @@ class _Header extends StatelessWidget {
                     ],
                   ),
                 ),
-                GlassPanel(
-                  radius: 999,
-                  padding: EdgeInsets.all(lerpDouble(5, 4, progress)!),
-                  strong: true,
-                  child: CircleAvatar(
-                    radius: avatarRadius,
-                    backgroundColor: AppColors.primarySoft,
-                    child: Icon(
-                      Icons.auto_awesome_rounded,
-                      color: AppColors.primary,
-                      size: lerpDouble(20, 17, progress)!,
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(999),
+                    onTap: () => context.go('/profile'),
+                    child: GlassPanel(
+                      radius: 999,
+                      padding: EdgeInsets.all(lerpDouble(5, 4, progress)!),
+                      strong: true,
+                      child: CircleAvatar(
+                        radius: avatarRadius,
+                        backgroundColor: AppColors.primarySoft,
+                        backgroundImage: avatarUrl == null || avatarUrl!.isEmpty
+                            ? null
+                            : CachedNetworkImageProvider(
+                                avatarUrl!,
+                                headers: ArtworkCard.imageHeaders,
+                              ),
+                        child: avatarUrl == null || avatarUrl!.isEmpty
+                            ? Icon(
+                                Icons.person_rounded,
+                                color: AppColors.primary,
+                                size: lerpDouble(20, 17, progress)!,
+                              )
+                            : null,
+                      ),
                     ),
                   ),
                 ),

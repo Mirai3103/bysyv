@@ -8,7 +8,6 @@ import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../domain/models/artwork.dart';
 import '../../../../domain/models/novel.dart';
-import '../../../../domain/models/spotlight_article.dart';
 import '../../../core/widgets/app_background.dart';
 import '../../../core/widgets/artwork_card.dart';
 import '../../../core/widgets/glass_panel.dart';
@@ -64,16 +63,10 @@ class NewsScreen extends ConsumerWidget {
                     onAction: viewModel.refresh,
                   ),
                 )
-              else ...[
-                if (state.articles.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: _SpotlightStrip(articles: state.articles),
-                  ),
-                if (state.contentType == NewsContentType.artworks)
-                  _ArtworkGrid(artworks: state.artworks)
-                else
-                  _NovelList(novels: state.novels),
-              ],
+              else if (state.contentType == NewsContentType.artworks)
+                _ArtworkGrid(artworks: state.artworks)
+              else
+                _NovelList(novels: state.novels),
             ],
           ),
         ),
@@ -259,92 +252,6 @@ class _SwitchPill extends StatelessWidget {
   }
 }
 
-class _SpotlightStrip extends StatelessWidget {
-  const _SpotlightStrip({required this.articles});
-
-  final List<SpotlightArticle> articles;
-
-  @override
-  Widget build(BuildContext context) {
-    final visibleArticles = articles.take(6).toList();
-
-    return SizedBox(
-      height: 132,
-      child: ListView.separated(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          return _ArticleCard(article: visibleArticles[index]);
-        },
-        separatorBuilder: (context, index) => const SizedBox(width: 12),
-        itemCount: visibleArticles.length,
-      ),
-    );
-  }
-}
-
-class _ArticleCard extends StatelessWidget {
-  const _ArticleCard({required this.article});
-
-  final SpotlightArticle article;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 240,
-      child: GlassPanel(
-        padding: EdgeInsets.zero,
-        radius: 22,
-        strong: true,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(22),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 90,
-                height: double.infinity,
-                child: _NetworkImage(url: article.thumbnailUrl),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'SPOTLIGHT',
-                        style: TextStyle(
-                          color: AppColors.primary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 0.6,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        article.pureTitle ?? article.title,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppColors.ink,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w800,
-                          height: 1.15,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _ArtworkGrid extends StatelessWidget {
   const _ArtworkGrid({required this.artworks});
 
@@ -386,9 +293,9 @@ class _NovelList extends StatelessWidget {
       sliver: SliverList.separated(
         itemBuilder: (context, index) {
           final novel = novels[index];
-          return _NovelCard(novel: novel).animate().fadeIn(
-            delay: (80 + index * 35).ms,
-          );
+          return _NovelCard(
+            novel: novel,
+          ).animate().fadeIn(delay: (80 + index * 35).ms);
         },
         separatorBuilder: (context, index) => const SizedBox(height: 10),
         itemCount: novels.length,
